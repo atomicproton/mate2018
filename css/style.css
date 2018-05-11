@@ -9,6 +9,19 @@
 
 .webcam {
     width: 100%;
-    height: 55%;
+    height: 50%;
     border: 0;
+}
+
+.info-box {
+    width: 50%;
+    height: 45%;
+    float: left;
+    overflow: auto
+}
+
+html, body {
+    height: 100%;
+    padding: 0;
+    margin: 0;
 }

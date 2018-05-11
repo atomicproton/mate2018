@@ -3,7 +3,9 @@
 <!--Let browser know website is optimized for mobile-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <script src="js/app.js" defer></script>
+<script src="js/simplebar.js" defer></script>
 <link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/simplebar.css" />
 
 <body>
     <div id="ip-input" class="container valign-wrapper valign">
@@ -32,11 +34,21 @@
                 <iframe class="center-align webcam" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYZSCXFCxVgjzLTUqzgiTwb8nseGvGUoVJFT7EGiLyi9Yi14th"></iframe>
             </div>
         </div>
-        <div class="row">
-            <a class="btn" onclick="toggleJoystick()">Toggly the joystick</a>
-            <a id="websocket-toggle" class="btn" onclick="toggleWebsocket()">initializing...</a>
+        <div class="info-box">
+            <div class="row center-align">
+                <a class="btn" onclick="toggleJoystick()">Toggly the joystick</a>
+                <a id="websocket-toggle" class="btn" onclick="toggleWebsocket()">initializing...</a>
+            </div>
+            <div class="container center-align">
+                    <a id="xDropdown-trigger" class='dropdown-trigger btn' href='#' data-target='xDropdown'>initializing...</a>
+                    <ul id='xDropdown' class='dropdown-content'></ul>
+                    <a id="yDropdown-trigger" class='dropdown-trigger btn' href='#' data-target='yDropdown'>initializing...</a>
+                    <ul id='yDropdown' class='dropdown-content'></ul>
+                    <a id="turnDropdown-trigger" class='dropdown-trigger btn' href='#' data-target='turnDropdown'>initializing...</a>
+                    <ul id='turnDropdown' class='dropdown-content'></ul>
+            </div>
         </div>
-        <div id="joystick-values">initializing...</div>
+        <div id="joystick-values" class="info-box">initializing...</div>
     </div>
 
     <!--JavaScript at end of body for optimized loading-->

@@ -5,6 +5,7 @@ var updater;
 var turnSensitivity = 0.5; //Value 0-1
 var websocketOn = false;
 var toastBlocker = false;
+var axes = {};
 
 /*//Handle gamepad connections, TODO: Status indicator
 function gamepadHandler(event, connecting) {
@@ -31,6 +32,9 @@ window.addEventListener("gamepaddisconnected", function (e) {
 document.getElementById('ip').value = localStorage.getItem("save-ip");
 
 function init() {
+    axes.x = localStorage.getItem("x") ? localStorage.getItem("x") : 0;
+    axes.y = localStorage.getItem("y") ? localStorage.getItem("y") : 1;
+    axes.turn = localStorage.getItem("turn") ? localStorage.getItem("turn") : 5;
     //disable buttons
     document.getElementById("ip").disabled = true;
     document.getElementById("ip-button").classList.add('disabled');
@@ -88,9 +92,12 @@ function update() {
         //process motors
         var motors = {};
         //Get initial values
-        var z = -gp.axes[1];
+        /*var z = -gp.axes[1];
         var turn = gp.axes[5];
-        var roll = gp.axes[0];
+        var roll = gp.axes[0];*/
+        var z = -gp.axes[axes.y];
+        var turn = gp.axes[axes.turn];
+        var roll = gp.axes[axes.x];
         var up;
         if (gp.buttons[5].pressed || gp.buttons[4].pressed) {
             up = 1;
@@ -129,22 +136,22 @@ function update() {
 
         jsonTemplate.value = motors.lh;
         jsonTemplate.channel = 0;
-        console.log(JSON.stringify(jsonTemplate));
+        //console.log(JSON.stringify(jsonTemplate));
         if (websocketOn)
             socket.send(JSON.stringify(jsonTemplate));
         jsonTemplate.value = motors.rh;
         jsonTemplate.channel = 1;
-        console.log(JSON.stringify(jsonTemplate));
+        //console.log(JSON.stringify(jsonTemplate));
         if (websocketOn)
             socket.send(JSON.stringify(jsonTemplate));
         jsonTemplate.value = motors.lv;
         jsonTemplate.channel = 2;
-        console.log(JSON.stringify(jsonTemplate));
+        //console.log(JSON.stringify(jsonTemplate));
         if (websocketOn)
             socket.send(JSON.stringify(jsonTemplate));
         jsonTemplate.value = motors.rv;
         jsonTemplate.channel = 3;
-        console.log(JSON.stringify(jsonTemplate));
+        //console.log(JSON.stringify(jsonTemplate));
         if (websocketOn)
             socket.send(JSON.stringify(jsonTemplate));
 
@@ -157,6 +164,52 @@ function update() {
                     gamepadIndex = i;
                     document.getElementById("info").classList.remove('hide');
                     document.getElementById("gamepad-init").classList.add('hide');
+
+                    document.getElementById("xDropdown-trigger").textContent = "X axis: " + axes.x;
+                    var xDropdown = document.getElementById("xDropdown");
+                    for(j = 0; j < gamepads[i].axes.length; j++) {
+                        var li = document.createElement("li");
+                        var a = document.createElement("a");
+                        a.textContent = j;
+                        a.setAttribute("data-index", j);
+                        a.setAttribute("data-axes", "x");
+                        a.addEventListener("click", (click) => {
+                            dropdown(click.srcElement.dataset.axes, click.srcElement.dataset.index);
+                        });
+                        li.appendChild(a);
+                        xDropdown.appendChild(li);
+                    }
+
+                    document.getElementById("yDropdown-trigger").textContent = "Y axis: " + axes.y;
+                    var yDropdown = document.getElementById("yDropdown");
+                    for(j = 0; j < gamepads[i].axes.length; j++) {
+                        var li = document.createElement("li");
+                        var a = document.createElement("a");
+                        a.textContent = j;
+                        a.setAttribute("data-index", j);
+                        a.setAttribute("data-axes", "y");
+                        a.addEventListener("click", (click) => {
+                            dropdown(click.srcElement.dataset.axes, click.srcElement.dataset.index);
+                        });
+                        li.appendChild(a);
+                        yDropdown.appendChild(li);
+                    }
+
+                    document.getElementById("turnDropdown-trigger").textContent = "Twist axis: " + axes.turn;
+                    var yDropdown = document.getElementById("turnDropdown");
+                    for(j = 0; j < gamepads[i].axes.length; j++) {
+                        var li = document.createElement("li");
+                        var a = document.createElement("a");
+                        a.textContent = j;
+                        a.setAttribute("data-index", j);
+                        a.setAttribute("data-axes", "turn");
+                        a.addEventListener("click", (click) => {
+                            dropdown(click.srcElement.dataset.axes, click.srcElement.dataset.index);
+                        });
+                        li.appendChild(a);
+                        yDropdown.appendChild(li);
+                    }
+                    M.Dropdown.init( document.querySelectorAll('.dropdown-trigger'));
                 }
             }
         }
@@ -180,4 +233,11 @@ function toggleWebsocket() {
     } else {
         websocketOn = true;
     }
+}
+
+function dropdown(setAxis, value) {
+    axes[setAxis] = value;
+    document.getElementById(setAxis + "Dropdown-trigger").textContent = setAxis + " axis: " + value;
+    console.log(axes.x);
+    localStorage.setItem(setAxis, value);
 }
