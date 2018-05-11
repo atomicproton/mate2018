@@ -1,0 +1,9 @@
+{
+    "op": "set",
+    "device":"motorblock0",
+    "channel": 0,
+    "register": {
+        "speed": 100,
+        "dir": 1
+    }
+}
