@@ -9,7 +9,7 @@
     <div id="ip-input" class="container valign-wrapper valign">
         <div class="row valign-wrapper inner-valign">
             <div class="input-field col s12 l8 offset-l1">
-                <input id="ip" type="text" onkeydown = "if (event.keyCode == 13) {init();}" value="ws://demos.kaazing.com/echo">
+                <input id="ip" type="text" onkeydown="if (event.keyCode == 13) {init();}" value="ws://demos.kaazing.com/echo">
                 <label for="ip">Enter IP Here</label>
             </div>
             <div class="col s12 l3">
@@ -23,8 +23,18 @@
     </div>
 
     <div id="info" class="hide">
-        <a class="btn" onclick="toggleJoystick()">Toggly the joystick</a>
-        <a id="websocket-toggle" class="btn" onclick="toggleWebsocket()">initializing...</a>
+        <div class="row">
+            <div class="col s12 l6 container">
+                <iframe class="center-align webcam" src="https://img.freepik.com/free-photo/underwater-photo-of-a-pool_1219-17.jpg?size=338&ext=jpg"></iframe>
+            </div>
+            <div class="col s12 l6 container">
+                <iframe class="center-align webcam" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYZSCXFCxVgjzLTUqzgiTwb8nseGvGUoVJFT7EGiLyi9Yi14th"></iframe>
+            </div>
+        </div>
+        <div class="row">
+            <a class="btn" onclick="toggleJoystick()">Toggly the joystick</a>
+            <a id="websocket-toggle" class="btn" onclick="toggleWebsocket()">initializing...</a>
+        </div>
         <div id="joystick-values">initializing...</div>
     </div>
 
