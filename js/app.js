@@ -3,6 +3,7 @@ var gamepads = {};
 var gamepadIndex = -1;
 var updater;
 var turnSensitivity = 0.5; //Value 0-1
+var websocketOn = false;
 
 /*//Handle gamepad connections, TODO: Status indicator
 function gamepadHandler(event, connecting) {
@@ -23,24 +24,32 @@ window.addEventListener("gamepaddisconnected", function (e) {
     gamepadHandler(e, false);
 }, false);*/
 
+document.getElementById('ip').value = localStorage.getItem("save-ip");
+
 function init() {
     //disable buttons
     document.getElementById("ip").disabled = true;
     document.getElementById("ip-button").classList.add('disabled');
     //Connect to socket
     var uri = document.getElementById('ip').value;
-    socket = new WebSocket(uri);
+    localStorage.setItem('save-ip', uri);
+    try {
+        socket = new WebSocket(uri);
+    } catch (e) {
+        M.toast({ html: 'Connection error. Please check console for more info' });
+        document.getElementById("ip").disabled = false;
+        document.getElementById("ip-button").classList.remove('disabled');
+        return;
+    }
 
     socket.onopen = function (event) {
         document.getElementById("gamepad-init").classList.remove('hide');
         document.getElementById("ip-input").classList.add('hide');
-        updater = window.setInterval(() => {
-            update()
-        }, 200);
+        toggleJoystick();
     }
 
     socket.onmessage = function (event) {
-        console.log(event.data);
+        console.log("Received: " + event.data);
     }
 }
 
@@ -68,7 +77,9 @@ function update() {
             html += "Stick " + i + ": " + gp.axes[i] + "<br/>";
         }
 
-        document.getElementById("info").innerHTML = html;
+        document.getElementById("joystick-values").innerHTML = html;
+
+        document.getElementById("websocket-toggle").textContent = websocketOn ? "Websocket enabled" : "Websocket disabled";
 
         //process motors
         var motors = {};
@@ -106,6 +117,33 @@ function update() {
         motors.rv = parseInt(100 * (up - motors.rvDistanceFromTarget));
         console.log("Vertical: " + motors.lv + ", " + motors.rv);
 
+        var jsonTemplate = {
+            "op": "set",
+            "device": "motorblock0",
+            "register": "fancy_speed",
+        }
+
+        jsonTemplate.value = motors.lh;
+        jsonTemplate.channel = 0;
+        console.log(JSON.stringify(jsonTemplate));
+        if (websocketOn)
+            socket.send(JSON.stringify(jsonTemplate));
+        jsonTemplate.value = motors.rh;
+        jsonTemplate.channel = 1;
+        console.log(JSON.stringify(jsonTemplate));
+        if (websocketOn)
+            socket.send(JSON.stringify(jsonTemplate));
+        jsonTemplate.value = motors.lv;
+        jsonTemplate.channel = 2;
+        console.log(JSON.stringify(jsonTemplate));
+        if (websocketOn)
+            socket.send(JSON.stringify(jsonTemplate));
+        jsonTemplate.value = motors.rv;
+        jsonTemplate.channel = 3;
+        console.log(JSON.stringify(jsonTemplate));
+        if (websocketOn)
+            socket.send(JSON.stringify(jsonTemplate));
+
         //socket.send("Test");
     } else {
         //Look for joystick
@@ -118,5 +156,24 @@ function update() {
                 }
             }
         }
+    }
+}
+
+function toggleJoystick() {
+    if (updater) {
+        clearInterval(updater);
+        updater = null;
+    } else {
+        updater = window.setInterval(() => {
+            update()
+        }, 200);
+    }
+}
+
+function toggleWebsocket() {
+    if (websocketOn) {
+        websocketOn = false;
+    } else {
+        websocketOn = true;
     }
 }

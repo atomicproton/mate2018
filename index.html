@@ -22,7 +22,11 @@
         <h5 class="center-align inner-valign">Please press trigger on the joystick</h5>
     </div>
 
-    <div id="info" class="hide">initializing...</div>
+    <div id="info" class="hide">
+        <a class="btn" onclick="toggleJoystick()">Toggly the joystick</a>
+        <a id="websocket-toggle" class="btn" onclick="toggleWebsocket()">initializing...</a>
+        <div id="joystick-values">initializing...</div>
+    </div>
 
     <!--JavaScript at end of body for optimized loading-->
     <script type="text/javascript" src="js/materialize.min.js"></script>
