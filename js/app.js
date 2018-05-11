@@ -4,6 +4,7 @@ var gamepadIndex = -1;
 var updater;
 var turnSensitivity = 0.5; //Value 0-1
 var websocketOn = false;
+var toastBlocker = false;
 
 /*//Handle gamepad connections, TODO: Status indicator
 function gamepadHandler(event, connecting) {
@@ -17,12 +18,15 @@ function gamepadHandler(event, connecting) {
         delete gamepads[gamepad.index];
     }
 }
+*/
 window.addEventListener("gamepadconnected", function (e) {
-    gamepadHandler(e, true);
+    if (toastBlocker)
+        M.toast({ html: 'Controller connected.' });
 }, false);
 window.addEventListener("gamepaddisconnected", function (e) {
-    gamepadHandler(e, false);
-}, false);*/
+    M.toast({ html: 'Controller disconnected.' });
+    toastBlocker = true;
+}, false);
 
 document.getElementById('ip').value = localStorage.getItem("save-ip");
 
