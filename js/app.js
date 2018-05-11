@@ -48,6 +48,7 @@ function update() {
     //update gamepads
     gamepads = navigator.getGamepads();
 
+    //only run if there is a joystick
     if (gamepadIndex >= 0) {
         if (!gamepads[gamepadIndex]) {
             return;
@@ -107,6 +108,7 @@ function update() {
 
         //socket.send("Test");
     } else {
+        //Look for joystick
         for (i = 0; i < gamepads.length; i++) {
             if (gamepads[i].buttons.length > 0) {
                 if (gamepads[i].buttons[0].pressed) {
