@@ -120,7 +120,7 @@ function update() {
         var jsonTemplate = {
             "op": "set",
             "device": "motorblock0",
-            "register": "fancy_speed",
+            "register": "speed_fancy",
         }
 
         jsonTemplate.value = motors.lh;
