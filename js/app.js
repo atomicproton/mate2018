@@ -35,6 +35,7 @@ function init() {
     axes.x = localStorage.getItem("x") ? localStorage.getItem("x") : 0;
     axes.y = localStorage.getItem("y") ? localStorage.getItem("y") : 1;
     axes.turn = localStorage.getItem("turn") ? localStorage.getItem("turn") : 5;
+    axes.paddle = localStorage.getItem("paddle") ? localStorage.getItem("paddle") : 0;
     //disable buttons
     document.getElementById("ip").disabled = true;
     document.getElementById("ip-button").classList.add('disabled');
@@ -57,7 +58,13 @@ function init() {
     }
 
     socket.onmessage = function (event) {
-        console.log("Received: " + event.data);
+        if (event.device === "cs1") {
+            document.getElementById("amps").textContent = "Total amps: " + event.value;
+            document.getElementById("amps-progress").style.width = (event.value / 14) + "%";
+        }
+        else {
+            document.getElementById("amps" + event.channel).style.width = (event.value / 14) + "%";
+        }
     }
 }
 
@@ -98,6 +105,7 @@ function update() {
         var z = -gp.axes[axes.y];
         var turn = gp.axes[axes.turn];
         var roll = gp.axes[axes.x];
+        var paddle = (1-gp.axes[axes.paddle])/2;
         var up;
         if (gp.buttons[5].pressed || gp.buttons[4].pressed) {
             up = 1;
@@ -112,20 +120,20 @@ function update() {
         //Edit "turnSensitivity" at the top to adjust the sensitivity of turns
         motors.lhTarget = turn < 0 ? -1 : 1;
         motors.lhDistanceFromTarget = turnSensitivity * parseFloat(Math.abs(turn)) * (parseFloat(z) - parseFloat(motors.lhTarget));
-        motors.lh = parseInt(100 * (z - motors.lhDistanceFromTarget));
+        motors.lh = parseInt(paddle * 100 * (z - motors.lhDistanceFromTarget));
 
         motors.rhTarget = turn < 0 ? 1 : -1;
         motors.rhDistanceFromTarget = turnSensitivity * parseFloat(Math.abs(turn)) * (parseFloat(z) - parseFloat(motors.rhTarget));
-        motors.rh = parseInt(100 * (z - motors.rhDistanceFromTarget));
+        motors.rh = parseInt(paddle * 100 * (z - motors.rhDistanceFromTarget));
         console.log("Horizontal: " + motors.lh + ", " + motors.rh);
 
         motors.lvTarget = roll < 0 ? -1 : 1;
         motors.lvDistanceFromTarget = turnSensitivity * parseFloat(Math.abs(roll)) * (parseFloat(up) - parseFloat(motors.lvTarget));
-        motors.lv = parseInt(100 * (up - motors.lvDistanceFromTarget));
+        motors.lv = parseInt(paddle * 100 * (up - motors.lvDistanceFromTarget));
 
         motors.rvTarget = roll < 0 ? 1 : -1;
         motors.rvDistanceFromTarget = turnSensitivity * parseFloat(Math.abs(roll)) * (parseFloat(up) - parseFloat(motors.rvTarget));
-        motors.rv = parseInt(100 * (up - motors.rvDistanceFromTarget));
+        motors.rv = parseInt(paddle * 100 * (up - motors.rvDistanceFromTarget));
         console.log("Vertical: " + motors.lv + ", " + motors.rv);
 
         var jsonTemplate = {
@@ -155,6 +163,23 @@ function update() {
         if (websocketOn)
             socket.send(JSON.stringify(jsonTemplate));
 
+        //request amps
+        jsonTemplate = {
+            "op": "get",
+            "device": "cs0",
+            "channel": 0,
+            "register": "current"
+        }
+
+        if (websocketOn) {
+            for (i = 0; i < 4; i++) {
+                jsonTemplate.channel = i;
+                socket.send(JSON.stringify(jsonTemplate));
+            }
+            jsonTemplate.channel = 0;
+            jsonTemplate.device = "cs1";
+            socket.send(JSON.stringify(jsonTemplate));
+        }
         //socket.send("Test");
     } else {
         //Look for joystick
@@ -167,7 +192,7 @@ function update() {
 
                     document.getElementById("xDropdown-trigger").textContent = "X axis: " + axes.x;
                     var xDropdown = document.getElementById("xDropdown");
-                    for(j = 0; j < gamepads[i].axes.length; j++) {
+                    for (j = 0; j < gamepads[i].axes.length; j++) {
                         var li = document.createElement("li");
                         var a = document.createElement("a");
                         a.textContent = j;
@@ -182,7 +207,7 @@ function update() {
 
                     document.getElementById("yDropdown-trigger").textContent = "Y axis: " + axes.y;
                     var yDropdown = document.getElementById("yDropdown");
-                    for(j = 0; j < gamepads[i].axes.length; j++) {
+                    for (j = 0; j < gamepads[i].axes.length; j++) {
                         var li = document.createElement("li");
                         var a = document.createElement("a");
                         a.textContent = j;
@@ -197,7 +222,7 @@ function update() {
 
                     document.getElementById("turnDropdown-trigger").textContent = "Twist axis: " + axes.turn;
                     var yDropdown = document.getElementById("turnDropdown");
-                    for(j = 0; j < gamepads[i].axes.length; j++) {
+                    for (j = 0; j < gamepads[i].axes.length; j++) {
                         var li = document.createElement("li");
                         var a = document.createElement("a");
                         a.textContent = j;
@@ -209,7 +234,22 @@ function update() {
                         li.appendChild(a);
                         yDropdown.appendChild(li);
                     }
-                    M.Dropdown.init( document.querySelectorAll('.dropdown-trigger'));
+
+                    document.getElementById("paddleDropdown-trigger").textContent = "Paddle axis: " + axes.paddle;
+                    var yDropdown = document.getElementById("paddleDropdown");
+                    for (j = 0; j < gamepads[i].axes.length; j++) {
+                        var li = document.createElement("li");
+                        var a = document.createElement("a");
+                        a.textContent = j;
+                        a.setAttribute("data-index", j);
+                        a.setAttribute("data-axes", "paddle");
+                        a.addEventListener("click", (click) => {
+                            dropdown(click.srcElement.dataset.axes, click.srcElement.dataset.index);
+                        });
+                        li.appendChild(a);
+                        yDropdown.appendChild(li);
+                    }
+                    M.Dropdown.init(document.querySelectorAll('.dropdown-trigger'));
                 }
             }
         }

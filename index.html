@@ -35,17 +35,53 @@
             </div>
         </div>
         <div class="info-box">
+            <div class="container">
+                <h3 class="center-align" id="amps">Total amps: </h3>
+                <div class="progress">
+                    <div class="determinate" id="amps-progress"></div>
+                </div>
+                <div class="row">
+                    <div class="col s6">
+                        <h5>Left Horizontal:</h5>
+                        <div class="progress">
+                            <div class="determinate" id="amps0"></div>
+                        </div>
+                    </div>
+                    <div class="col s6">
+                        <h5>Right Horizontal:</h5>
+                        <div class="progress">
+                            <div class="determinate" id="amps1"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s6">
+                        <h5>Left Vertical:</h5>
+                        <div class="progress">
+                            <div class="determinate" id="amps2"></div>
+                        </div>
+                    </div>
+                    <div class="col s6">
+                        <h5>Right Vertical:</h5>
+                        <div class="progress">
+                            <div class="determinate" id="amps3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="row center-align">
                 <a class="btn" onclick="toggleJoystick()">Toggly the joystick</a>
                 <a id="websocket-toggle" class="btn" onclick="toggleWebsocket()">initializing...</a>
             </div>
             <div class="container center-align">
-                    <a id="xDropdown-trigger" class='dropdown-trigger btn' href='#' data-target='xDropdown'>initializing...</a>
-                    <ul id='xDropdown' class='dropdown-content'></ul>
-                    <a id="yDropdown-trigger" class='dropdown-trigger btn' href='#' data-target='yDropdown'>initializing...</a>
-                    <ul id='yDropdown' class='dropdown-content'></ul>
-                    <a id="turnDropdown-trigger" class='dropdown-trigger btn' href='#' data-target='turnDropdown'>initializing...</a>
-                    <ul id='turnDropdown' class='dropdown-content'></ul>
+                <a id="xDropdown-trigger" class='dropdown-trigger btn' href='#' data-target='xDropdown'>initializing...</a>
+                <ul id='xDropdown' class='dropdown-content'></ul>
+                <a id="yDropdown-trigger" class='dropdown-trigger btn' href='#' data-target='yDropdown'>initializing...</a>
+                <ul id='yDropdown' class='dropdown-content'></ul>
+                <a id="turnDropdown-trigger" class='dropdown-trigger btn' href='#' data-target='turnDropdown'>initializing...</a>
+                <ul id='turnDropdown' class='dropdown-content'></ul>
+                <a id="paddleDropdown-trigger" class='dropdown-trigger btn' href='#' data-target='paddleDropdown'>initializing...</a>
+                <ul id='paddleDropdown' class='dropdown-content'></ul>
             </div>
         </div>
         <div id="joystick-values" class="info-box">initializing...</div>
