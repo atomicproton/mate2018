@@ -260,7 +260,9 @@ function toggleJoystick() {
     if (updater) {
         clearInterval(updater);
         updater = null;
+        document.getElementById("joystick-toggle").classList.add("red");
     } else {
+        document.getElementById("joystick-toggle").classList.remove("red");
         updater = window.setInterval(() => {
             update()
         }, 200);
@@ -269,8 +271,10 @@ function toggleJoystick() {
 
 function toggleWebsocket() {
     if (websocketOn) {
+        document.getElementById("websocket-toggle").classList.add("red");
         websocketOn = false;
     } else {
+        document.getElementById("websocket-toggle").classList.remove("red");
         websocketOn = true;
     }
 }
